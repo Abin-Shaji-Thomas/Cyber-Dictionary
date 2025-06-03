@@ -4,6 +4,6 @@ Welcome to my Cyber-Bible — a continuously growing knowledge base, practice lo
 
 ## 🚀 Current Activities
 - Daily Practice: TryHackMe, Hack The Box, GitHub Commits
-- Internship Projects under Pinnacle Labs
+- Projects 
 - Building cybersecurity tools and utilities
 - Daily note-taking and logging of concepts
