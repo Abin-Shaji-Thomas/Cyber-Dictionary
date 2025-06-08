@@ -7,4 +7,6 @@ Welcome to my Cyber-Bible — a continuously growing knowledge base, practice lo
 - Projects 
 - Building cybersecurity tools and utilities
 
+---
+
 Daily updates will be in daily-learning.md in notes folder
