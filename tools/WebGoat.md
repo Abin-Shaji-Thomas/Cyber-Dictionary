@@ -1,132 +1,112 @@
-# 🐺 WebWolf – Complete Ethical Cybersecurity Tool Guide
+# WebGoat – Full Documentation for Cybersecurity Lab Setup & Usage
 
-> A full guide for ethical hackers, cybersecurity students, and penetration testing enthusiasts. This document covers everything you need to know about using, configuring, and learning from **WebWolf**, the support platform for WebGoat.
-
----
-
-## 📖 What is WebWolf?
-
-**WebWolf** is an intentionally vulnerable application created by OWASP to work alongside **WebGoat**. While WebGoat provides interactive security lessons, WebWolf acts as a companion server that simulates real-world services such as:
-
-- 📨 Fake email inboxes
-- 🗂️ File upload and download features
-- 🔗 Phishing links
-- 📬 Payload reception for SSRF/XSS
-- 🧪 Realistic post-exploitation endpoints
-
-WebWolf gives ethical hackers and learners an environment to **practice and test exploits beyond the browser**, helping you understand what happens **after an attack is successful**.
+**File:** `tools/webgoat.md`  
+**Purpose:** Internal documentation for setting up, running, using, and managing the OWASP WebGoat platform in a professional cybersecurity learning environment.
 
 ---
 
-## 🔧 Prerequisites
+## 1. Introduction
 
-Before installing WebWolf, ensure the following tools are installed on your Kali Linux system:
+**WebGoat** is an open-source, deliberately insecure web application maintained by OWASP. It is designed to teach developers, testers, and cybersecurity students about web application vulnerabilities through hands-on lessons. Each module is structured around a specific vulnerability, aligned with the OWASP Top 10, and designed to be safely exploited in a controlled environment.
+
+This document provides complete guidance for installing, managing, updating, and using WebGoat in a local lab using Docker, as well as proper usage patterns and professional-level best practices.
+
+---
+
+## 2. Use Case
+
+- Learning OWASP Top 10 vulnerabilities
+- Practicing ethical hacking in a sandbox environment
+- Preparing for certifications (OSCP, CEH, etc.)
+- Teaching students real-world vulnerability scenarios
+- Running security workshops or internship training
+
+---
+
+## 3. System Requirements
+
+- **Operating System:** Kali Linux, Parrot OS, or any Linux distro with Docker
+- **Tools Needed:**
+  - Docker
+  - Browser (Firefox preferred)
+  - Optionally: OWASP ZAP, Burp Suite for intercepts
+
+---
+
+## 4. Installation (Docker Method – Recommended)
+
+### Step 1: Install Docker
 
 ```bash
 sudo apt update
-sudo apt install docker.io docker-compose -y
-sudo systemctl start docker
+sudo apt install docker.io -y
 sudo systemctl enable docker
+sudo systemctl start docker
 ```
 
----
-
-## 🚀 Installing WebGoat + WebWolf with Docker
-
-WebWolf and WebGoat are bundled in a single image by OWASP. You only need one Docker command to start both services:
+### Step 2: Pull and Run WebGoat
 
 ```bash
 sudo docker run -d -p 8082:8080 -p 9092:9090 --name webgoat webgoat/webgoat
 ```
 
-### Port Mappings:
+- `8080` (container) → `8082` (host) for WebGoat
+- `9090` (container) → `9092` (host) for WebWolf
 
-| Service   | Internal Port | External Port | Purpose                        |
-|-----------|----------------|---------------|--------------------------------|
-| WebGoat   | 8080           | 8082          | Web app for learning security |
-| WebWolf   | 9090           | 9092          | Simulated service endpoints   |
+### Step 3: Access WebGoat
 
----
+Open your browser and go to:
 
-## 🌐 Accessing WebGoat & WebWolf
-
-After running the container, open:
-
-- WebGoat: [http://localhost:8082/WebGoat](http://localhost:8082/WebGoat)
-- WebWolf: [http://localhost:9092/WebWolf](http://localhost:9092/WebWolf)
-
-Login with your custom user or create one if prompted.
+```
+http://localhost:8082/WebGoat
+```
 
 ---
 
-## 🧪 What Can You Do with WebWolf?
+## 5. Login and User Management
 
-| Feature                          | Description                                                  |
-|----------------------------------|--------------------------------------------------------------|
-| 📩 View Inbox                    | See fake phishing emails sent during exercises               |
-| 🔗 Access Phishing URLs          | Test phishing links generated from WebGoat lessons           |
-| 📤 Upload Files                  | Simulate file upload vulnerabilities                         |
-| 📬 Receive POST Requests         | Used for testing CSRF, SSRF, and XSS callbacks               |
-| 🧾 View Logs                     | Helps debug your payloads and backdoor simulations           |
+- **Default behavior:** You’ll be prompted to create a user.
+- Use a test login like:
+  - Username: `cyber-warrior`
+  - Password: `education`
+- This user will persist in the container unless the container is deleted.
 
 ---
 
-## 🔐 Real-World Ethical Use Cases
+## 6. Restarting WebGoat (Without Losing Data)
 
-- **Email Spoofing Simulation**  
-  Send a fake phishing email and monitor if the victim clicks using WebWolf’s mail service.
-
-- **Malicious File Upload**  
-  Upload a `.php` or `.jsp` backdoor (harmlessly in lab) and see how it’s stored or executed.
-
-- **XSS Callback Collection**  
-  Trigger an XSS payload in WebGoat that calls back to WebWolf, simulating data theft.
-
-- **CSRF Proof of Concept**  
-  Send a crafted POST request to WebWolf and analyze the impact of missing CSRF protection.
-
----
-
-## 🧼 Stopping WebGoat & WebWolf Without Losing Data
-
-To **temporarily shut down** both services **without deleting user data**, run:
+To safely **pause or stop** WebGoat:
 
 ```bash
 sudo docker stop webgoat
 ```
 
-This pauses the container. Your progress, login, and session files are safe.
-
----
-
-## 🔁 Starting WebGoat & WebWolf Again
-
-To resume your work later (e.g., next day):
+To **resume** WebGoat later:
 
 ```bash
-sudo systemctl start docker
 sudo docker start webgoat
 ```
 
-Your existing users and lessons are still available.
+> Your user data and challenge progress will remain intact.
 
 ---
 
-## 💾 Backup (Optional but Recommended)
+## 7. Updating WebGoat
 
-You can create a backup image of your container:
+If a newer version is released:
 
 ```bash
-sudo docker commit webgoat webgoat-backup
+sudo docker pull webgoat/webgoat
+sudo docker stop webgoat
+sudo docker rm webgoat
+sudo docker run -d -p 8082:8080 -p 9092:9090 --name webgoat webgoat/webgoat
 ```
 
-This snapshot can be restored later if you delete the original.
+> **Note:** This will reset your existing data unless you create a persistent volume or commit a backup first.
 
 ---
 
-## 🧨 Permanently Deleting WebGoat & WebWolf
-
-If you want to **fully remove** WebGoat/WebWolf and all saved data:
+## 8. Deleting WebGoat Completely
 
 ```bash
 sudo docker stop webgoat
@@ -134,46 +114,155 @@ sudo docker rm webgoat
 sudo docker rmi webgoat/webgoat
 ```
 
-> ⚠️ This will delete your user progress, session cookies, and uploaded files.
+This will delete:
+- All user data
+- Saved lesson progress
+- Logs
 
 ---
 
-## 🧠 Tips for Students
+## 9. Common Problems and Fixes
 
-- WebWolf is **not just a side tool** — it teaches post-exploitation and real-world behavior.
-- Try using WebWolf with Burp Suite and ZAP to simulate advanced payloads.
-- Always use WebWolf/WebGoat in **private**, non-production environments.
-- Avoid sharing URLs or cookies from WebWolf labs publicly.
-
----
-
-## 📚 Additional Learning Resources
-
-- [OWASP WebGoat GitHub](https://github.com/WebGoat/WebGoat)
-- [OWASP ZAP](https://www.zaproxy.org/)
-- [Docker for Beginners](https://docs.docker.com/get-started/)
-- [Web Application Security Testing Guide (OWASP)](https://owasp.org/www-project-web-security-testing-guide/)
+| Issue | Solution |
+|-------|----------|
+| Port already in use | Use different host ports like 8083 or 9093 |
+| Container name conflict | Rename container or remove old one |
+| WebGoat not loading | Wait 30 seconds after container starts; check `docker logs webgoat` |
+| "Unhealthy" container | Restart using `docker restart webgoat` |
 
 ---
 
-## ✅ Summary
+## 10. WebGoat Modules Overview
 
-WebWolf is an essential part of any ethical hacker’s lab. Paired with WebGoat, it provides a **complete simulation environment** for understanding how web-based attacks can progress after exploitation.
+Each lesson teaches a vulnerability by allowing the student to attack the application. Example modules:
 
-Whether you are:
-- Practicing CSRF or XSS callbacks  
-- Analyzing phishing behaviors  
-- Testing file upload weaknesses  
-- Learning about how payloads work post-click...
-
-WebWolf gives you a place to do it **safely, legally, and ethically**.
+| Vulnerability | Lesson Name |
+|---------------|-------------|
+| SQL Injection | "SQLi - Advanced", "String SQLi" |
+| Cross-Site Scripting | "Reflected XSS", "DOM XSS" |
+| Broken Access Control | "Session Hijack", "Forced Browsing" |
+| CSRF | "Cross Site Request Forgery" |
+| HTTP Proxy Attack | "Modify Method via Intercept" |
+| Insecure Login | "Authentication Bypass" |
 
 ---
 
-## 📝 Author Notes
+## 11. How to Work Through WebGoat
 
-This markdown file was created as part of a private ethical hacking knowledge base called **CyberBible**, maintained by Abin Shaji Thomas and intended to support other ethical cybersecurity learners in mastering tools through practical labs and self-guided study.
+### A. Start with Basic Lessons:
+- SQL Injection
+- Reflected XSS
+- CSRF
 
-If you're reading this, remember:  
-> **Train hard, hack ethically. 🛡️**
+### B. Use DevTools or ZAP:
+- Inspect network requests
+- Modify cookies or headers
+- Replay attacks
+
+### C. Follow WebWolf Instructions (if integrated):
+- Send phishing emails
+- Upload payloads
+- Submit responses to WebWolf server
+
+---
+
+## 12. Integrating with OWASP ZAP
+
+To intercept WebGoat traffic:
+
+1. Configure Firefox to use ZAP as proxy (127.0.0.1:8080)
+2. Import ZAP's Root CA certificate into Firefox
+3. Load WebGoat and complete lessons
+4. Use ZAP’s Breakpoints to:
+   - Pause requests
+   - Modify headers
+   - Change HTTP methods
+5. Use ZAP scanner to passively analyze WebGoat vulnerabilities
+
+---
+
+## 13. Logging and Monitoring
+
+To view logs from the container:
+
+```bash
+sudo docker logs webgoat
+```
+
+This shows:
+- Server startup progress
+- Application logs
+- Errors (like misconfigured payloads or crashes)
+
+---
+
+## 14. Ethical Usage and Lab Environment Notes
+
+- Do not expose WebGoat to a public network or server.
+- Use only in **isolated environments** like localhost or VMs.
+- Never use attack payloads from WebGoat against real websites or applications.
+- Use it to understand, not exploit.
+
+---
+
+## 15. Screenshot Tips for Report Writing
+
+Use tools like `flameshot` or `spectacle` to capture:
+
+- Successful exploit messages
+- Payloads in DevTools
+- Intercepted requests via ZAP
+- WebWolf interactions (like email view, uploads)
+
+Organize screenshots with filenames like:
+```
+webgoat_sqli_success.png
+webgoat_csrf_intercept.png
+```
+
+---
+
+## 16. Saving Progress (Optional)
+
+If you plan to shutdown or reset, commit the container:
+
+```bash
+sudo docker commit webgoat webgoat-backup
+```
+
+To restore it later:
+
+```bash
+sudo docker run -d -p 8082:8080 -p 9092:9090 --name webgoat-restored webgoat-backup
+```
+
+---
+
+## 17. Alternatives to WebGoat
+
+| Platform | Purpose |
+|----------|---------|
+| DVWA (Damn Vulnerable Web App) | Simpler but useful |
+| Juice Shop (OWASP) | More realistic frontend |
+| BWAPP | Great for broader vuln coverage |
+
+Use them after mastering WebGoat.
+
+---
+
+## 18. Final Notes
+
+WebGoat is a powerful, safe training ground to understand how web attacks work. It is best paired with tools like OWASP ZAP or Burp Suite and used alongside WebWolf for realistic exercises.
+
+Always keep the following in mind:
+- Document everything
+- Learn responsibly
+- Never test outside the lab
+- Help others learn
+
+---
+
+## 19. Author Notes
+
+This document was written as part of a private documentation initiative by Abin Shaji Thomas for the **CyberBible project**, designed to support ethical hacking education and structured, repeatable lab setups for red team development.
 
