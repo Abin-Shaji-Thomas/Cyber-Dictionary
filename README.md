@@ -8,4 +8,4 @@ Welcome to my Cyber-Bible — a continuously growing knowledge base, practice lo
 
 ---
 
-Daily updates will be in daily-learning.md in notes folder
+Daily updates 
